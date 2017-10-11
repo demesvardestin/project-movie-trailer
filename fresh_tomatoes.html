@@ -1,0 +1,478 @@
+
+<head>
+    <meta charset="utf-8">
+    <title>TrailFlix - Browse Your Favorite Trailers</title>
+
+    <!-- Bootstrap 3 -->
+    <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.1.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.1.0/css/bootstrap-theme.min.css">
+    <link href="https://fonts.googleapis.com/css?family=Maven+Pro" rel="stylesheet">
+    <script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
+    <script src="https://netdna.bootstrapcdn.com/bootstrap/3.1.0/js/bootstrap.min.js"></script>
+    <style type="text/css" media="screen">
+        body {
+            padding-top: 80px;
+            background: #f5fcf9;
+            font-family: 'Maven Pro', sans-serif;
+        }
+        html, body {
+            overflow-x: hidden;
+        }
+        #trailer .modal-dialog {
+            margin-top: 200px;
+            width: 640px;
+            height: 480px;
+        }
+        .hanging-close {
+            position: absolute;
+            top: -12px;
+            right: -12px;
+            z-index: 9001;
+        }
+        #trailer-video {
+            width: 100%;
+            height: 100%;
+        }
+        .movie-tile {
+            padding-bottom: 20px;
+        }
+        .movie-tile:hover {
+            
+        }
+        .movie-image:hover {
+            filter: brightness(40%);
+        }
+        .scale-media {
+            padding-bottom: 56.25%;
+            position: relative;
+        }
+        .scale-media iframe {
+            border: none;
+            height: 100%;
+            position: absolute;
+            width: 100%;
+            left: 0;
+            top: 0;
+            background-color: white;
+        }
+        .navbar {
+            background: #2FC2EF;
+            height: auto;
+            box-shadow: 0px 5px 10px gray;
+        }
+        .container-body {
+            padding-left: 160px;
+            padding-right: 160px;
+            padding-top: 50px;
+        }
+        .movie-div{
+            margin-bottom: 20px;
+            padding: 0;
+        }
+        .movie-image{
+            height: 400px;
+            width: 290px;
+            border: 1px solid #a3e1cc;
+            border-radius: 4px;
+        }
+        .navbar-brand{
+            font-family: 'Maven Pro', sans-serif;
+            color: #fff;
+            font-size: 34px;
+        }
+        .btn {
+            font-size: 22px;
+        }
+        .links {
+            font-size: 25px;
+            color: #fff;
+        }
+        .trailer-button {
+            padding-left: 8.5px;
+            padding-right: 8.5px;
+        }
+        .navbar-right {
+            padding-right: 40px;
+        }
+        links:hover {
+            color: #2FC2EF;
+        }
+        footer {
+            background: #97e0f7;
+            height: auto;
+        }
+        .footer-container {
+            padding-left: 25px;
+        }
+    </style>
+    <script type="text/javascript" charset="utf-8">
+        // Pause the video when the modal is closed
+        $(document).on('click', '.hanging-close, .modal-backdrop, .modal', function (event) {
+            // Remove the src so the player itself gets removed, as this is the only
+            // reliable way to ensure the video stops playing in IE
+            $("#trailer-video-container").empty();
+        });
+        // Start playing the video whenever the trailer modal is opened
+        $(document).on('click', '.trailer-button', function (event) {
+            var trailerYouTubeId = $(this).attr('data-trailer-youtube-id')
+            var sourceUrl = 'http://www.youtube.com/embed/' + trailerYouTubeId + '?autoplay=1&html5=1';
+            $("#trailer-video-container").empty().append($("<iframe></iframe>", {
+              'id': 'trailer-video',
+              'type': 'text-html',
+              'src': sourceUrl,
+              'frameborder': 0
+            }));
+        });
+        // Animate in the movies when the page loads
+        $(document).ready(function () {
+          $('.movie-tile').hide().first().show("fast", function showNext() {
+            $(this).next("div").show("fast", showNext);
+          });
+        });
+    </script>
+</head>
+
+<!DOCTYPE html>
+<html lang="en">
+  <body>
+    <!-- Trailer Video Modal -->
+    <div class="modal" id="trailer">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <a href="#" class="hanging-close" data-dismiss="modal" aria-hidden="true">
+            <img src="https://lh5.ggpht.com/v4-628SilF0HtHuHdu5EzxD7WRqOrrTIDi_MhEG6_qkNtUK5Wg7KPkofp_VJoF7RS2LhxwEFCO1ICHZlc-o_=s0#w=24&h=24"/>
+          </a>
+          <div class="scale-media" id="trailer-video-container">
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Main Page Content -->
+    <div class="container">
+      <div class="navbar navbar-fixed-top" role="navigation">
+        <div class="navbar-header">
+            <a class="navbar-brand" href="#">TrailFlix</a>
+        </div>
+        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+            <ul class="nav navbar-nav navbar-right">
+                <li><a href="#" class="links" data-toggle="dropdown">Action</a></li>
+                <li><a href="#" class="links">Comedy</a></li>
+                <li><a href="#" class="links">Documentary</a></li>
+                <li><a href="#" class="links">Sports</a></li>
+            </ul>
+        </div>
+      </div>
+    </div>
+    <div class="container-body">
+        <div class="row">
+          
+    <div class="col-md-3 movie-tile">
+        <!-- Movie details modal **I have been unable to individualize the modal. For some reason, using 1 as data-target/id does not work** -->
+        <div class="modal fade" id="details" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+          <div class="modal-dialog">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h3 class="modal-title" id="myModalLabel">Movie Details</h3>
+              </div>
+              <div class="modal-body">
+                <h4>
+                    <strong>Title</strong>: Django Unchained </br >
+                    <strong>Description</strong>: Former slave sets out to rescue his wife. <br />
+                    <strong>Genre</strong>: thriller, action <br />
+                    <strong>Release Date</strong>: December 25 2012 <br />
+                    <strong>Notable Actors</strong>: Jamie Foxx, Kerry Washington, Samuel L. Jackson, Leonardo DiCaprio <br />
+                    <strong>Box Office</strong>: $425.4M <br />
+                </h4>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="movie-div">
+            <img src="https://upload.wikimedia.org/wikipedia/en/8/8b/Django_Unchained_Poster.jpg" class="movie-image">
+        </div>
+        <div class="movie-name">
+            <h2>Django Unchained</h2>
+        </div>
+        <div class="button-actions">
+            <!-- <a data-toggle="modal" data-target="#details" class="btn btn-primary btn-lg">Details</a> -->
+            <button class="btn btn-info btn-lg trailer-button" data-trailer-youtube-id="ztD3mRMdqSw" data-toggle="modal" data-target="#trailer">Play Trailer</button>
+            <button class="btn btn-primary btn-lg trailer-button" data-toggle="modal" data-target="#details">Movie Details</button>
+        </div>
+    </div>
+
+    <div class="col-md-3 movie-tile">
+        <!-- Movie details modal **I have been unable to individualize the modal. For some reason, using 2 as data-target/id does not work** -->
+        <div class="modal fade" id="details" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+          <div class="modal-dialog">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h3 class="modal-title" id="myModalLabel">Movie Details</h3>
+              </div>
+              <div class="modal-body">
+                <h4>
+                    <strong>Title</strong>: Shaolin Soccer </br >
+                    <strong>Description</strong>: Former shaolin monks come together to form a soccer team. <br />
+                    <strong>Genre</strong>: action, comedy, sports, kung-fu <br />
+                    <strong>Release Date</strong>: July 12 2001 <br />
+                    <strong>Notable Actors</strong>: Stephen Chow, Zhao Wei <br />
+                    <strong>Box Office</strong>: $42M <br />
+                </h4>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="movie-div">
+            <img src="https://upload.wikimedia.org/wikipedia/en/3/3e/ShaolinSoccerFilmPoster.jpg" class="movie-image">
+        </div>
+        <div class="movie-name">
+            <h2>Shaolin Soccer</h2>
+        </div>
+        <div class="button-actions">
+            <!-- <a data-toggle="modal" data-target="#details" class="btn btn-primary btn-lg">Details</a> -->
+            <button class="btn btn-info btn-lg trailer-button" data-trailer-youtube-id="6FAaOwNnHTA" data-toggle="modal" data-target="#trailer">Play Trailer</button>
+            <button class="btn btn-primary btn-lg trailer-button" data-toggle="modal" data-target="#details">Movie Details</button>
+        </div>
+    </div>
+
+    <div class="col-md-3 movie-tile">
+        <!-- Movie details modal **I have been unable to individualize the modal. For some reason, using 3 as data-target/id does not work** -->
+        <div class="modal fade" id="details" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+          <div class="modal-dialog">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h3 class="modal-title" id="myModalLabel">Movie Details</h3>
+              </div>
+              <div class="modal-body">
+                <h4>
+                    <strong>Title</strong>: Rush Hour </br >
+                    <strong>Description</strong>: A Chinese cop teams up with an LAPD detective to fight international crimes. <br />
+                    <strong>Genre</strong>: action, comedy, martial-arts <br />
+                    <strong>Release Date</strong>: September 18 1998 <br />
+                    <strong>Notable Actors</strong>: Jackie Chan, Chris Tucker <br />
+                    <strong>Box Office</strong>: $244.4M <br />
+                </h4>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="movie-div">
+            <img src="https://upload.wikimedia.org/wikipedia/en/thumb/5/55/Rush_hour_ver2.jpg/220px-Rush_hour_ver2.jpg" class="movie-image">
+        </div>
+        <div class="movie-name">
+            <h2>Rush Hour</h2>
+        </div>
+        <div class="button-actions">
+            <!-- <a data-toggle="modal" data-target="#details" class="btn btn-primary btn-lg">Details</a> -->
+            <button class="btn btn-info btn-lg trailer-button" data-trailer-youtube-id="JMiFsFQcFLE" data-toggle="modal" data-target="#trailer">Play Trailer</button>
+            <button class="btn btn-primary btn-lg trailer-button" data-toggle="modal" data-target="#details">Movie Details</button>
+        </div>
+    </div>
+
+    <div class="col-md-3 movie-tile">
+        <!-- Movie details modal **I have been unable to individualize the modal. For some reason, using 4 as data-target/id does not work** -->
+        <div class="modal fade" id="details" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+          <div class="modal-dialog">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h3 class="modal-title" id="myModalLabel">Movie Details</h3>
+              </div>
+              <div class="modal-body">
+                <h4>
+                    <strong>Title</strong>: Scary Movie 3 </br >
+                    <strong>Description</strong>: A group of friend is faced with strange occurences that will give you chills...and make you laugh...a lot. <br />
+                    <strong>Genre</strong>: thriller, comedy <br />
+                    <strong>Release Date</strong>: October 24 2003 <br />
+                    <strong>Notable Actors</strong>: Anna Faris, Anthony Anderson <br />
+                    <strong>Box Office</strong>: $220.7M <br />
+                </h4>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="movie-div">
+            <img src="https://upload.wikimedia.org/wikipedia/en/thumb/a/ab/Scary-movie-3-poster-3.jpg/220px-Scary-movie-3-poster-3.jpg" class="movie-image">
+        </div>
+        <div class="movie-name">
+            <h2>Scary Movie 3</h2>
+        </div>
+        <div class="button-actions">
+            <!-- <a data-toggle="modal" data-target="#details" class="btn btn-primary btn-lg">Details</a> -->
+            <button class="btn btn-info btn-lg trailer-button" data-trailer-youtube-id="fGTrKmkceiE" data-toggle="modal" data-target="#trailer">Play Trailer</button>
+            <button class="btn btn-primary btn-lg trailer-button" data-toggle="modal" data-target="#details">Movie Details</button>
+        </div>
+    </div>
+
+    <div class="col-md-3 movie-tile">
+        <!-- Movie details modal **I have been unable to individualize the modal. For some reason, using 5 as data-target/id does not work** -->
+        <div class="modal fade" id="details" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+          <div class="modal-dialog">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h3 class="modal-title" id="myModalLabel">Movie Details</h3>
+              </div>
+              <div class="modal-body">
+                <h4>
+                    <strong>Title</strong>: The Accountant </br >
+                    <strong>Description</strong>: A child with autism grows up to become a gifted accountant, and a part-time crime fighter. <br />
+                    <strong>Genre</strong>: action <br />
+                    <strong>Release Date</strong>: October 14 2016 <br />
+                    <strong>Notable Actors</strong>: Ben Affleck, Anna Kendrick <br />
+                    <strong>Box Office</strong>: $155.2M <br />
+                </h4>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="movie-div">
+            <img src="https://upload.wikimedia.org/wikipedia/en/thumb/e/e4/The_Accountant_%282016_film%29.png/220px-The_Accountant_%282016_film%29.png" class="movie-image">
+        </div>
+        <div class="movie-name">
+            <h2>The Accountant</h2>
+        </div>
+        <div class="button-actions">
+            <!-- <a data-toggle="modal" data-target="#details" class="btn btn-primary btn-lg">Details</a> -->
+            <button class="btn btn-info btn-lg trailer-button" data-trailer-youtube-id="DBfsgcswlYQ" data-toggle="modal" data-target="#trailer">Play Trailer</button>
+            <button class="btn btn-primary btn-lg trailer-button" data-toggle="modal" data-target="#details">Movie Details</button>
+        </div>
+    </div>
+
+    <div class="col-md-3 movie-tile">
+        <!-- Movie details modal **I have been unable to individualize the modal. For some reason, using 6 as data-target/id does not work** -->
+        <div class="modal fade" id="details" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+          <div class="modal-dialog">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h3 class="modal-title" id="myModalLabel">Movie Details</h3>
+              </div>
+              <div class="modal-body">
+                <h4>
+                    <strong>Title</strong>: Spider Man </br >
+                    <strong>Description</strong>: A teenager receives superhuman abilities after being bitten by a mutated spider. <br />
+                    <strong>Genre</strong>: fantasy, action, superhero <br />
+                    <strong>Release Date</strong>: May 3 2002 <br />
+                    <strong>Notable Actors</strong>: Tobey Maguire <br />
+                    <strong>Box Office</strong>: $821.7M <br />
+                </h4>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="movie-div">
+            <img src="https://upload.wikimedia.org/wikipedia/en/thumb/f/f3/Spider-Man2002Poster.jpg/220px-Spider-Man2002Poster.jpg" class="movie-image">
+        </div>
+        <div class="movie-name">
+            <h2>Spider Man</h2>
+        </div>
+        <div class="button-actions">
+            <!-- <a data-toggle="modal" data-target="#details" class="btn btn-primary btn-lg">Details</a> -->
+            <button class="btn btn-info btn-lg trailer-button" data-trailer-youtube-id="O7zvehDxttM" data-toggle="modal" data-target="#trailer">Play Trailer</button>
+            <button class="btn btn-primary btn-lg trailer-button" data-toggle="modal" data-target="#details">Movie Details</button>
+        </div>
+    </div>
+
+    <div class="col-md-3 movie-tile">
+        <!-- Movie details modal **I have been unable to individualize the modal. For some reason, using 7 as data-target/id does not work** -->
+        <div class="modal fade" id="details" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+          <div class="modal-dialog">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h3 class="modal-title" id="myModalLabel">Movie Details</h3>
+              </div>
+              <div class="modal-body">
+                <h4>
+                    <strong>Title</strong>: Hot Fuzz </br >
+                    <strong>Description</strong>: A London cop gets reassigned to a boring town in the countryside...but things were certainly not what they seemed. <br />
+                    <strong>Genre</strong>: thriller, comedy, mystery <br />
+                    <strong>Release Date</strong>: April 20 2007 <br />
+                    <strong>Notable Actors</strong>: Edgar Wright, Nick Frost, Jim Broadbent <br />
+                    <strong>Box Office</strong>: $80.7M <br />
+                </h4>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="movie-div">
+            <img src="https://upload.wikimedia.org/wikipedia/en/thumb/c/c9/HotFuzzUKposter.jpg/220px-HotFuzzUKposter.jpg" class="movie-image">
+        </div>
+        <div class="movie-name">
+            <h2>Hot Fuzz</h2>
+        </div>
+        <div class="button-actions">
+            <!-- <a data-toggle="modal" data-target="#details" class="btn btn-primary btn-lg">Details</a> -->
+            <button class="btn btn-info btn-lg trailer-button" data-trailer-youtube-id="ayTnvVpj9t4" data-toggle="modal" data-target="#trailer">Play Trailer</button>
+            <button class="btn btn-primary btn-lg trailer-button" data-toggle="modal" data-target="#details">Movie Details</button>
+        </div>
+    </div>
+
+    <div class="col-md-3 movie-tile">
+        <!-- Movie details modal **I have been unable to individualize the modal. For some reason, using 8 as data-target/id does not work** -->
+        <div class="modal fade" id="details" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+          <div class="modal-dialog">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h3 class="modal-title" id="myModalLabel">Movie Details</h3>
+              </div>
+              <div class="modal-body">
+                <h4>
+                    <strong>Title</strong>: Johnny English Reborn </br >
+                    <strong>Description</strong>: An MI7 member gets reassigned to a case in spite of his numerous comedic antics. <br />
+                    <strong>Genre</strong>: action, comedy <br />
+                    <strong>Release Date</strong>: December 25 2012 <br />
+                    <strong>Notable Actors</strong>: Rowan Atkinson, Gillian Anderson, Dominic West, Daniel Kaluuya <br />
+                    <strong>Box Office</strong>: $160M <br />
+                </h4>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="movie-div">
+            <img src="https://upload.wikimedia.org/wikipedia/en/thumb/6/6c/Johnny_English_Reborn_Poster.jpg/220px-Johnny_English_Reborn_Poster.jpg" class="movie-image">
+        </div>
+        <div class="movie-name">
+            <h2>Johnny English Reborn</h2>
+        </div>
+        <div class="button-actions">
+            <!-- <a data-toggle="modal" data-target="#details" class="btn btn-primary btn-lg">Details</a> -->
+            <button class="btn btn-info btn-lg trailer-button" data-trailer-youtube-id="cKYec49R2a4" data-toggle="modal" data-target="#trailer">Play Trailer</button>
+            <button class="btn btn-primary btn-lg trailer-button" data-toggle="modal" data-target="#details">Movie Details</button>
+        </div>
+    </div>
+
+        </div>
+    </div>
+    <footer>
+        <div class="footer-container">
+            <div class="row">
+                <div class="col-md-4 text-left">
+                    <h4>&copy; Demesvar Destin</h4>
+                </div>
+            </div>
+        </div>
+    </footer>
+  </body>
+</html>
